@@ -18,47 +18,51 @@ const PIECES_DATA = PUZZLE_PIECES_P3;
 // TODO: Add draggable and onDragStart to the div. In onDragStart: e.dataTransfer.setData("text/plain", String(piece.id)); e.dataTransfer.effectAllowed = "move". Add cursor-grab and active:cursor-grabbing to className.
 function PuzzlePiece({ piece }) {
   return (
-    <div
-      className="inline-flex items-center justify-center w-20 h-20 rounded-lg text-white font-bold shadow"
-      style={{ backgroundColor: piece.color }}
-    >
-      {piece.label}
-    </div>
+	<div
+	  className="inline-flex items-center justify-center w-20 h-20 rounded-lg text-white font-bold shadow"
+	  style={{ backgroundColor: piece.color }}
+	>
+	  {piece.label}
+	</div>
   );
 }
 
 function Problem5() {
-  // TODO: State for which piece is in each slot: useState([0, 1, 2, 3]). slotIds[i] = piece id in slot i.
-  const [slotIds, setSlotIds] = useState([0, 1, 2, 3]);
+	// TODO: State for which piece is in each slot: useState([0, 1, 2, 3]). slotIds[i] = piece id in slot i.
+	const [slotIds, setSlotIds] = useState([0, 1, 2, 3]);
+	
 
-  // TODO: handleDragOver: e.preventDefault(); e.dataTransfer.dropEffect = "move";
-  const handleDragOver = (e) => {};
+	// TODO: handleDragOver: e.preventDefault(); e.dataTransfer.dropEffect = "move";
+	const handleDragOver = (e) => {
+		e.preventDefault();
+		e.dataTransfer.dropEffect = "move";
+	};
 
-  // TODO: handleDrop(e, toIndex): e.preventDefault(); get pieceId from e.dataTransfer.getData("text/plain"); find fromIndex = slotIds.indexOf(pieceId); copy slotIds, swap next[fromIndex] and next[toIndex], then setSlotIds(next).
-  const handleDrop = (e, toIndex) => {};
+	// TODO: handleDrop(e, toIndex): e.preventDefault(); get pieceId from e.dataTransfer.getData("text/plain"); find fromIndex = slotIds.indexOf(pieceId); copy slotIds, swap next[fromIndex] and next[toIndex], then setSlotIds(next).
+	const handleDrop = (e, toIndex) => {};
 
-  const piecesInSlots = slotIds.map((id) => PIECES_DATA.find((p) => p.id === id));
+	const piecesInSlots = slotIds.map((id) => PIECES_DATA.find((p) => p.id === id));
 
-  return (
-    <section className="problem-view p-6">
-      <h2 className="text-xl font-semibold mb-2">Problem 5: Drag and drop</h2>
-      <p className="text-gray-700 mb-4">
-        Make pieces draggable and drop them on another slot to swap. Use <code>draggable</code>, <code>onDragStart</code>, <code>onDragOver</code>, and <code>onDrop</code>.
-      </p>
+	return (
+	<section className="problem-view p-6">
+	  <h2 className="text-xl font-semibold mb-2">Problem 5: Drag and drop</h2>
+	  <p className="text-gray-700 mb-4">
+		Make pieces draggable and drop them on another slot to swap. Use <code>draggable</code>, <code>onDragStart</code>, <code>onDragOver</code>, and <code>onDrop</code>.
+	  </p>
 
-      <div className="grid grid-cols-2 gap-3 w-fit">
-        {piecesInSlots.map((piece, index) => (
-          <div
-            key={piece.id}
-            onDragOver={handleDragOver}
-            onDrop={(e) => handleDrop(e, index)}
-            className="min-w-[5rem] min-h-[5rem] rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center bg-gray-50"
-          >
-            <PuzzlePiece piece={piece} />
-          </div>
-        ))}
-      </div>
-    </section>
+	  <div className="grid grid-cols-2 gap-3 w-fit">
+		{piecesInSlots.map((piece, index) => (
+		  <div
+			key={piece.id}
+			onDragOver={handleDragOver}
+			onDrop={(e) => handleDrop(e, index)}
+			className="min-w-[5rem] min-h-[5rem] rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center bg-gray-50"
+		  >
+			<PuzzlePiece piece={piece} />
+		  </div>
+		))}
+	  </div>
+	</section>
   );
 }
 
