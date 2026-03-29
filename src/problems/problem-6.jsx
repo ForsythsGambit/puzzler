@@ -33,7 +33,7 @@ const TOTAL_SLOTS = GRID_SIZE * GRID_SIZE;
 const BOARD_SIZE = GRID_SIZE * SLOT_SIZE + (GRID_SIZE - 1) * GAP + 2 * PADDING;
 
 // Configurable magnet snap power (in pixels). Increase for "stronger" snap.
-const MAGNET_RADIUS = 80;
+const MAGNET_RADIUS = 100;
 
 // Helper to compute the top/left origin of a slot in the grid.
 function slotOrigin(col, row) {
@@ -53,7 +53,6 @@ const SLOT_CENTERS = Array.from({ length: TOTAL_SLOTS }, (_, index) => {
     top: origin.top + SLOT_SIZE / 2,
   };
 });
-
 // Fixed off-grid starting positions for the initial "jumble" of pieces.
 const OFF_GRID_STARTS = [
   { left: BOARD_SIZE / 2 - 40, top: BOARD_SIZE / 2 - 50 },
@@ -87,7 +86,7 @@ function PuzzlePiece({ piece, position }) {
 
 function Problem6() {
   // State: slotIds is an array of length TOTAL_SLOTS, each entry is either null or a piece id.
-  // Start with all null so all pieces are off-grid in the jumble.
+  // Start with all null so all pieces are console.log(dist)off-grid in the jumble.
   const [slotIds, setSlotIds] = useState(() => {
     return Array(TOTAL_SLOTS).fill(null);
   });
@@ -106,7 +105,42 @@ function Problem6() {
   // 5. Otherwise, update slotIds using setSlotIds so that:
   //    - If the piece was off-grid, put it into that slot (and optionally clear any piece that was there).
   //    - If the piece was already on-grid, swap it with whatever is in the target slot.
-  const handleDropOnBoard = (e) => {};
+  const handleDropOnBoard = (e) => {
+	const pieceID = Number(e.dataTransfer.getData("text/plain"));
+	const boardBounds = e.currentTarget.getBoundingClientRect();
+	const relativePosition = {left: e.clientX - boardBounds.left, top: e.clientY - boardBounds.top}
+	
+	function calcDistance ( one, two )
+	{
+		return Math.sqrt( Math.abs((one.left - two.left)*(one.left - two.left)  + (one.top - two.top)*(one.top - two.top)))
+	}
+
+	let minDist = {dist: Infinity, slot: null, index: -1};
+	for (const [index, slot] of SLOT_CENTERS.entries())
+	{
+		const dist = calcDistance(slot, relativePosition);
+		if (dist < minDist.dist){
+			minDist = {dist: dist, slot: slot, index: index}
+		}
+	}
+
+	if (minDist.dist < MAGNET_RADIUS)
+	{
+		const fromIndex = slotIds.indexOf(pieceID);
+		const toIndex = minDist.index;
+		const next = [...slotIds];
+
+		if (fromIndex == -1)
+		{
+			next[toIndex] = pieceID;
+		} else {
+			const temp = next[toIndex];
+			next[toIndex] = pieceID
+			next[fromIndex] = temp
+		}
+		setSlotIds(next);		
+	}
+  };
 
   return (
     <section className="problem-view p-6">
